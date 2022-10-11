@@ -1,0 +1,1284 @@
+GithubLink:https://github.com/BARANIDHARAN-S-Git/SchoolMVC
+-----------------------BusinessLogicLibrary---------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLogicLibrary
+{
+    public class School_BLL
+    {
+        
+            private int _RegisterNumber;
+
+            public int RegisterNumber
+            {
+                get { return _RegisterNumber; }
+                set {_RegisterNumber = value; }
+            }
+
+            
+
+
+            private string _StudentName;
+
+            public string StudenName
+            {
+
+                get { return _StudentName; }
+                set
+                {
+                   
+                    
+                        _StudentName = value;
+                    
+
+                }
+            }
+
+            private int _Age;
+
+            public int Age
+            {
+                
+                get { return _Age; }
+                set { _Age = value; }
+            }
+
+
+       
+
+        private int _SubjectId;
+        public int SubjectId
+        {
+            get { return _SubjectId; }
+            set { _SubjectId = value; }
+        }
+
+        private String _SubjectName;
+
+        public string SubjectName
+        {
+            get
+            {
+                return _SubjectName;
+            }
+            set
+            {
+                _SubjectName = value;
+            }
+        }
+
+       
+        private int _classRoomNo;
+        public int ClassRoomNo
+        {
+            get { return _classRoomNo; }
+            set { _classRoomNo = value; }
+        }
+
+        private int _NoOfSTudentsInClass;
+        public int NoOfSTudentsInClass
+        {
+            get { return _NoOfSTudentsInClass; }
+            set { _NoOfSTudentsInClass = value; }
+        }
+
+       
+    }
+    
+}
+
+------------------------------DataAccessLibraray-----------------
+
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BusinessLogicLibrary;
+
+namespace DataAccessLibrary
+{
+    public class School_DAL
+    {
+        public bool InsertStudent(School_BLL Student)
+        {
+
+            int id = 0;
+            using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString))
+            {
+               
+                SqlCommand command = new SqlCommand("[dbo].[sp_InsertStudent]", cn);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@RegisterNumber", Student.RegisterNumber);
+                command.Parameters.AddWithValue("@StudentName", Student.StudenName);
+                command.Parameters.AddWithValue("@Age", Student.Age);
+              
+                cn.Open();
+                id = command.ExecuteNonQuery();
+                cn.Close();
+
+            }
+            if (id >0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+
+        }
+        public int StudentCount()
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+
+            SqlCommand cmd = new SqlCommand("select count(*) from Student", cn);
+            cn.Open();
+
+            int cnt = (int)cmd.ExecuteScalar();
+            cn.Close();
+            cn.Dispose();
+            return cnt;
+
+
+        }
+
+        public bool UpdateStudent(School_BLL Student)
+        {
+
+          
+            SqlConnection cn = new SqlConnection("Data Source = LAPTOP-1GKJ0ROI\\SQLEXPRESS02; Initial Catalog = School; Integrated Security = True");
+            SqlCommand command = new SqlCommand("[dbo].[sp_UpdateStudent]", cn);
+
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+          
+            command.Parameters.AddWithValue("@p_RegisterNumber", Student.RegisterNumber);
+            command.Parameters.AddWithValue("@p_StudentName", Student.StudenName);
+            command.Parameters.AddWithValue("@p_Age", Student.Age);
+        
+
+            cn.Open();
+            int i = command.ExecuteNonQuery();
+            bool status = false;
+            if (i == 1)
+            {
+                status = true;
+            }
+            cn.Close();
+            cn.Dispose();
+            return status;
+
+        }
+        public bool DeleteStudent(int Student_RoolNo)
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+
+            SqlCommand cmdDelete = new SqlCommand("[dbo].sp_DeleteStudent", cn);
+            cmdDelete.CommandType = System.Data.CommandType.StoredProcedure;
+            cmdDelete.Parameters.AddWithValue("@p_RegisterNumber", Student_RoolNo);
+            cn.Open();
+            int i = cmdDelete.ExecuteNonQuery();
+            bool status = false;
+            if (i == 1)
+            {
+                status = true;
+            }
+            cn.Close();
+            cn.Dispose();
+            return status;
+
+        }
+        public School_BLL FindStudent(int Stuent_RollNo)
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+            SqlCommand cmdSelect = new SqlCommand("[dbo].sp_FindStudent", cn);
+            cmdSelect.CommandType = System.Data.CommandType.StoredProcedure;
+            cmdSelect.Parameters.AddWithValue("@p_RegisterNumber", Stuent_RollNo);
+            SqlParameter p1 = new SqlParameter();
+            p1.ParameterName = "@p_StudentName";
+            p1.SqlDbType = System.Data.SqlDbType.NVarChar;
+            p1.Size = 30;
+            p1.Direction = System.Data.ParameterDirection.Output;
+            cmdSelect.Parameters.Add(p1);
+
+
+           
+
+
+            SqlParameter p2 = new SqlParameter();
+            p2.ParameterName = "@p_Age";
+            p2.SqlDbType = System.Data.SqlDbType.Int;
+            
+            p2.Direction = System.Data.ParameterDirection.Output;
+            cmdSelect.Parameters.Add(p2);
+
+
+            cn.Open();
+            cmdSelect.ExecuteNonQuery();
+
+            School_BLL Studentfound = new School_BLL();
+
+            Studentfound.StudenName = p1.Value.ToString();
+            Studentfound.Age= Convert.ToInt32(p2.Value);
+       
+            
+
+
+
+
+            cn.Close();
+            cn.Dispose();
+
+
+            return Studentfound;
+
+
+
+        }
+
+
+
+   
+        public List<School_BLL> StudentList()
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+
+            SqlCommand cmdlist = new SqlCommand("select * from  [dbo].fn_Studentlist()", cn);
+            cn.Open();
+            SqlDataReader dr = cmdlist.ExecuteReader();
+            List<School_BLL> emplist = new List<School_BLL>();
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    School_BLL bal = new School_BLL();
+                    bal.RegisterNumber = Convert.ToInt32(dr["RegisterNumber"]);
+                    bal.StudenName = dr["StudentName"].ToString();
+                    bal.Age = Convert.ToInt32(dr["Age"]);
+                   
+                    
+                    emplist.Add(bal);
+                }
+            }
+            cn.Close();
+            cn.Dispose();
+            return emplist;
+
+        }
+      
+
+
+        public bool InsertSubject(School_BLL Subject)
+        {
+
+            int id = 0;
+            using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString))
+            {
+              
+                SqlCommand command = new SqlCommand("[dbo].[sp_InsertSubject]", cn);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@SubjectId", Subject.SubjectId);
+                command.Parameters.AddWithValue("@SubjectName", Subject.SubjectName);
+               
+                cn.Open();
+                id = command.ExecuteNonQuery();
+                cn.Close();
+
+            }
+            if (id > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+
+        }
+        
+
+        public bool UpdateSubject(School_BLL Subject)
+        {
+
+
+            SqlConnection cn = new SqlConnection("Data Source = LAPTOP-1GKJ0ROI\\SQLEXPRESS02; Initial Catalog = School; Integrated Security = True");
+            SqlCommand command = new SqlCommand("[dbo].[sp_UpdateSubject]", cn);
+
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("@p_SubjectId", Subject.SubjectId);
+            command.Parameters.AddWithValue("@p_SubjectName", Subject.SubjectName);
+           
+
+            cn.Open();
+            int i = command.ExecuteNonQuery();
+            bool status = false;
+            if (i == 1)
+            {
+                status = true;
+            }
+            cn.Close();
+            cn.Dispose();
+            return status;
+
+        }
+        public bool DeleteSubject(int SubjectId)
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+
+            SqlCommand cmdDelete = new SqlCommand("[dbo].[sp_DeleteSubject]", cn);
+            cmdDelete.CommandType = System.Data.CommandType.StoredProcedure;
+            cmdDelete.Parameters.AddWithValue("@p_SubjectId", SubjectId);
+            cn.Open();
+            int i = cmdDelete.ExecuteNonQuery();
+            bool status = false;
+            if (i == 1)
+            {
+                status = true;
+            }
+            cn.Close();
+            cn.Dispose();
+            return status;
+
+        }
+        public School_BLL FindSubject(int SubjectId)
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+            SqlCommand cmdSelect = new SqlCommand("[dbo].[sp_FindSubject]", cn);
+            cmdSelect.CommandType = System.Data.CommandType.StoredProcedure;
+            cmdSelect.Parameters.AddWithValue("@p_SubjectId", SubjectId);
+            SqlParameter p1 = new SqlParameter();
+            p1.ParameterName = "@p_SubjectName";
+            p1.SqlDbType = System.Data.SqlDbType.NVarChar;
+            p1.Size = 30;
+            p1.Direction = System.Data.ParameterDirection.Output;
+            cmdSelect.Parameters.Add(p1);
+
+
+
+
+
+
+
+            cn.Open();
+            cmdSelect.ExecuteNonQuery();
+
+            School_BLL Subjectfound = new School_BLL();
+
+            Subjectfound.StudenName = p1.Value.ToString();
+         
+
+
+
+
+
+            cn.Close();
+            cn.Dispose();
+
+
+            return Subjectfound;
+
+
+
+        }
+
+
+
+
+        public List<School_BLL> SubjectList()
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+
+            SqlCommand cmdlist = new SqlCommand("select * from  [dbo].[fn_Subjectlist]()", cn);
+            cn.Open();
+            SqlDataReader dr = cmdlist.ExecuteReader();
+            List<School_BLL> emplist = new List<School_BLL>();
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    School_BLL bal = new School_BLL();
+                    bal.SubjectId = Convert.ToInt32(dr["SubjectId"]);
+                    bal.SubjectName = dr["SubjectName"].ToString();
+                   
+
+                    emplist.Add(bal);
+                }
+            }
+            cn.Close();
+            cn.Dispose();
+            return emplist;
+
+        }
+
+   
+
+
+        public bool InsertClass(School_BLL Class)
+        {
+
+            int id = 0;
+            using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString))
+            {
+
+                SqlCommand command = new SqlCommand("[dbo].[sp_InsertClass]", cn);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@classRoomNo", Class.ClassRoomNo);
+                command.Parameters.AddWithValue("@NoOfStudentsInClass", Class.NoOfSTudentsInClass);
+
+                cn.Open();
+                id = command.ExecuteNonQuery();
+                cn.Close();
+
+            }
+            if (id > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+
+        }
+
+
+        public bool UpdateClass(School_BLL Class)
+        {
+
+
+            SqlConnection cn = new SqlConnection("Data Source = LAPTOP-1GKJ0ROI\\SQLEXPRESS02; Initial Catalog = School; Integrated Security = True");
+            SqlCommand command = new SqlCommand("[dbo].[sp_UpdateClass]", cn);
+
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("@p_classRoomNo", Class.ClassRoomNo);
+            command.Parameters.AddWithValue("@p_NoOfStudentsInClass", Class.NoOfSTudentsInClass);
+
+
+            cn.Open();
+            int i = command.ExecuteNonQuery();
+            bool status = false;
+            if (i == 1)
+            {
+                status = true;
+            }
+            cn.Close();
+            cn.Dispose();
+            return status;
+
+        }
+        public bool DeleteClass(int Class_RoomNo)
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+
+            SqlCommand cmdDelete = new SqlCommand("[dbo].[sp_DeleteClass]", cn);
+            cmdDelete.CommandType = System.Data.CommandType.StoredProcedure;
+            cmdDelete.Parameters.AddWithValue("@p_classRoomNo", Class_RoomNo);
+            cn.Open();
+            int i = cmdDelete.ExecuteNonQuery();
+            bool status = false;
+            if (i == 1)
+            {
+                status = true;
+            }
+            cn.Close();
+            cn.Dispose();
+            return status;
+
+        }
+        public School_BLL FindClass(int Class_RoomNo)
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+            SqlCommand cmdSelect = new SqlCommand("[dbo].[sp_FindClass]", cn);
+            cmdSelect.CommandType = System.Data.CommandType.StoredProcedure;
+            cmdSelect.Parameters.AddWithValue("@p_classRoomNo ", Class_RoomNo);
+            SqlParameter p1 = new SqlParameter();
+            p1.ParameterName = "@p_NoOfStudentsInClass";
+            p1.SqlDbType = System.Data.SqlDbType.Int;
+            p1.Direction = System.Data.ParameterDirection.Output;
+            cmdSelect.Parameters.Add(p1);
+
+
+
+
+
+
+
+            cn.Open();
+            cmdSelect.ExecuteNonQuery();
+
+            School_BLL Classfound = new School_BLL();
+
+            Classfound.NoOfSTudentsInClass= Convert.ToInt32(p1.Value);
+
+
+
+
+
+
+            cn.Close();
+            cn.Dispose();
+
+
+            return Classfound;
+
+
+
+        }
+
+
+
+
+        public List<School_BLL> ClassList()
+        {
+            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SchoolCnString"].ConnectionString);
+
+            SqlCommand cmdlist = new SqlCommand("select * from  [dbo].[fn_Classlist]()", cn);
+            cn.Open();
+            SqlDataReader dr = cmdlist.ExecuteReader();
+            List<School_BLL> emplist = new List<School_BLL>();
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    School_BLL bal = new School_BLL();
+                    bal.ClassRoomNo = Convert.ToInt32(dr["classRoomNo"]);
+                    bal.NoOfSTudentsInClass = Convert.ToInt32(dr["NoOfStudentsInClass"]);
+
+
+                    emplist.Add(bal);
+                }
+            }
+            cn.Close();
+            cn.Dispose();
+            return emplist;
+
+        }
+
+
+    }
+
+}
+-------------------------HelperLibrary--------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BusinessLogicLibrary;
+using DataAccessLibrary;
+
+namespace HelperLibrary
+{
+    public class School_HL
+    {
+
+        School_DAL dal = null;
+        public School_HL()
+        {
+            dal = new School_DAL();
+        }
+
+
+        public bool AddStudent(School_BLL Student)
+        {
+            return dal.InsertStudent(Student);
+
+        }
+
+
+        public bool EditStudent(School_BLL Student)
+        {
+            return dal.UpdateStudent(Student);
+        }
+        public bool RemoveStudent(int Student_id)
+        {
+            return dal.DeleteStudent(Student_id);
+        }
+        public School_BLL SearchStudent(int student_id )
+        {
+            return dal.FindStudent(student_id);
+        }
+
+       
+     public List<School_BLL> ShowEmployeeList()
+        {
+            return dal.StudentList();
+        }
+
+
+
+     public bool AddSubject(School_BLL Subject)
+        {
+            return dal.InsertSubject(Subject);
+
+        }
+
+
+        public bool EditSubject(School_BLL Subject)
+        {
+            return dal.UpdateSubject(Subject);
+        }
+        public bool RemoveSubject(int Subject_Id)
+        {
+            return dal.DeleteSubject(Subject_Id);
+        }
+        public School_BLL SearchSubject(int Subject_id)
+        {
+            return dal.FindSubject(Subject_id);
+        }
+
+
+
+
+
+        public List<School_BLL> ShowSubjectList()
+        {
+            return dal.SubjectList();
+        }
+
+
+        public bool AddClass(School_BLL Class)
+        {
+            return dal.InsertClass(Class);
+
+        }
+
+
+        public bool EditClass(School_BLL Class)
+        {
+            return dal.UpdateClass(Class);
+        }
+        public bool RemoveClass(int Class_RoomNo)
+        {
+            return dal.DeleteClass(Class_RoomNo);
+        }
+        public School_BLL SearchClass(int Class_RoomNo)
+        {
+            return dal.FindClass(Class_RoomNo);
+        }
+
+
+
+
+
+        public List<School_BLL> ShowClassList()
+        {
+            return dal.ClassList();
+        }
+    }
+}
+
+--------------------------------ClassController---------------------
+
+using BusinessLogicLibrary;
+using HelperLibrary;
+using SchoolMVC.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace SchoolMVC.Controllers
+{
+    public class ClassController : Controller
+    {
+        School_HL helper = null;
+        public ClassController()
+        {
+            helper = new School_HL();
+        }
+
+        public ActionResult Index()
+        {
+            var emplist = helper.ShowClassList();
+            List<ClassModel> modelsList = new List<ClassModel>();
+            foreach (var item in emplist)
+            {
+                modelsList.Add(new ClassModel{ classRoomNo = item.ClassRoomNo, NoOfStudentsInClass = item.NoOfSTudentsInClass });
+            }
+
+            return View(modelsList);
+        }
+
+
+        public ActionResult Details(int id)
+        {
+
+            var data = helper.SearchClass(id);
+            ClassModel cls = new ClassModel();
+            cls.classRoomNo = id;
+            cls.NoOfStudentsInClass = data.NoOfSTudentsInClass;
+
+            return View(cls);
+        }
+
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public ActionResult Create(FormCollection collection)
+        {
+            try
+            {
+
+
+                School_BLL bal = new School_BLL();
+                bal.ClassRoomNo = Convert.ToInt32(Request["classRoomNo"]);
+                bal.NoOfSTudentsInClass = Convert.ToInt32(Request["NoOfStudentsInClass"]);
+
+
+
+                bool ans = helper.AddClass(bal);
+                if (ans)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.exMsg = ex.Message;
+                return View();
+            }
+        }
+
+
+        public ActionResult Edit(int id)
+        {
+            var cls = helper.SearchClass(id);
+            ClassModel model = new ClassModel();
+            model.classRoomNo = id;
+            model.NoOfStudentsInClass =cls.NoOfSTudentsInClass;
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Edit(int id, FormCollection collection)
+        {
+            try
+            {
+
+                var cls = helper.SearchClass(id);
+                cls.ClassRoomNo = Convert.ToInt32(Request["classRoomNo"]);
+                cls.NoOfSTudentsInClass = Convert.ToInt32(Request["NoOfStudentsInClass"]);
+
+                bool ans = helper.EditClass(cls);
+
+
+                if (ans)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View();
+                }
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+
+        public ActionResult Delete(int id)
+        {
+            var cls = helper.SearchClass(id);
+            ClassModel model = new ClassModel();
+            model.classRoomNo= id;
+            model.NoOfStudentsInClass = cls.NoOfSTudentsInClass;
+
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Delete(int id, FormCollection collection)
+        {
+            try
+            {
+
+                var dataFound = helper.SearchClass(id);
+                if (dataFound != null)
+                {
+                    bool ans = helper.RemoveClass(id);
+                    if (ans)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        return View();
+                    }
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+    }
+}
+------------------------------------HomeController-------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace SchoolMVC.Controllers
+{
+    public class HomeController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+    }
+}
+
+-----------------------StudentController----------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using BusinessLogicLibrary;
+using HelperLibrary;
+using SchoolMVC.Models;
+
+namespace SchoolMVC.Controllers
+{
+    public class StudentController : Controller
+    {
+        
+        School_HL helper = null;
+        public StudentController()
+        {
+            helper = new School_HL();
+        }
+       
+        public ActionResult Index()
+        {
+            var emplist = helper.ShowEmployeeList();
+            List<StudentModel> modelsList = new List<StudentModel>();
+            foreach (var item in emplist)
+            {
+                modelsList.Add(new StudentModel { RegisterNumber = item.RegisterNumber, StudentName = item.StudenName, Age = item.Age});
+            }
+
+            return View(modelsList);
+        }
+
+  
+        public ActionResult Details(int id)
+        {
+
+            var data = helper.SearchStudent(id);
+            StudentModel stud= new StudentModel();
+            stud.RegisterNumber = id;
+            stud.StudentName = data.StudenName;
+            stud.Age = data.Age;
+            return View(stud);
+        }
+
+      
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        
+        [HttpPost]
+        public ActionResult Create(FormCollection collection)
+        {
+            try
+            {
+          
+
+                School_BLL bal = new School_BLL();
+                bal.RegisterNumber= Convert.ToInt32(Request["RegisterNumber"]);
+                bal.StudenName = Request["StudentName"].ToString();
+                bal.Age = Convert.ToInt32(Request["Age"]);
+               
+                
+
+                bool ans = helper.AddStudent(bal);
+                if (ans)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.exMsg = ex.Message;
+                return View();
+            }
+        }
+
+        
+        public ActionResult Edit(int id)
+        {
+            var Stud = helper.SearchStudent(id);
+            StudentModel model = new StudentModel();
+            model.RegisterNumber = id;
+            model.StudentName = Stud.StudenName;
+            model.Age= Stud.Age;
+            return View(model);
+        }
+
+        
+        [HttpPost]
+        public ActionResult Edit(int id, FormCollection collection)
+        {
+            try
+            {
+               
+                var stud = helper.SearchStudent(id);
+                stud.RegisterNumber = Convert.ToInt32(Request["RegisterNumber"]);
+                stud.StudenName = Request["StudentName"].ToString();
+                stud.Age = Convert.ToInt32(Request["Age"]);
+                bool ans = helper.EditStudent(stud);
+
+
+                if (ans)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View();
+                }
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        
+        public ActionResult Delete(int id)
+        {
+            var stud = helper.SearchStudent(id);
+            StudentModel model = new StudentModel();
+            model.RegisterNumber = id;
+            model.StudentName = stud.StudenName;
+            model.Age = stud.Age;
+            
+
+            return View(model);
+        }
+
+      
+        [HttpPost]
+        public ActionResult Delete(int id, FormCollection collection)
+        {
+            try
+            {
+                
+                var dataFound = helper.SearchStudent(id);
+                if (dataFound != null)
+                {
+                    bool ans = helper.RemoveStudent(id);
+                    if (ans)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        return View();
+                    }
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+    }
+}
+
+
+--------------------------SubjectController------------------------
+
+using BusinessLogicLibrary;
+using HelperLibrary;
+using SchoolMVC.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+
+namespace SchoolMVC.Controllers
+{
+    public class SubjectController : Controller
+    {
+
+        School_HL helper = null;
+        public SubjectController()
+        {
+            helper = new School_HL();
+        }
+
+        public ActionResult Index()
+        {
+            var emplist = helper.ShowSubjectList();
+            List<SubjectModel> modelsList = new List<SubjectModel>();
+            foreach (var item in emplist)
+            {
+                modelsList.Add(new SubjectModel { SubjectId = item.SubjectId, SubjectName = item.SubjectName});
+            }
+
+            return View(modelsList);
+        }
+
+
+        public ActionResult Details(int id)
+        {
+
+            var data = helper.SearchSubject(id);
+            SubjectModel sub = new SubjectModel();
+            sub.SubjectId = id;
+            sub.SubjectName = data.SubjectName;
+           
+            return View(sub);
+        }
+
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public ActionResult Create(FormCollection collection)
+        {
+            try
+            {
+
+
+                School_BLL bal = new School_BLL();
+                bal.SubjectId = Convert.ToInt32(Request["SubjectId"]);
+                bal.SubjectName = Request["SubjectName"].ToString();
+               
+
+
+                bool ans = helper.AddSubject(bal);
+                if (ans)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.exMsg = ex.Message;
+                return View();
+            }
+        }
+
+
+        public ActionResult Edit(int id)
+        {
+            var Sub = helper.SearchSubject(id);
+            SubjectModel model = new SubjectModel();
+            model.SubjectId = id;
+            model.SubjectName = Sub.SubjectName;
+           
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Edit(int id, FormCollection collection)
+        {
+            try
+            {
+
+                var sub = helper.SearchSubject(id);
+                sub.SubjectId= Convert.ToInt32(Request["SubjectId"]);
+                sub.SubjectName= Request["SubjectName"].ToString();
+                
+                bool ans = helper.EditSubject(sub);
+
+
+                if (ans)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View();
+                }
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+
+        public ActionResult Delete(int id)
+        {
+            var sub = helper.SearchSubject(id);
+            SubjectModel model = new SubjectModel();
+            model.SubjectId = id;
+            model.SubjectName = sub.SubjectName;
+           
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public ActionResult Delete(int id, FormCollection collection)
+        {
+            try
+            {
+
+                var dataFound = helper.SearchSubject(id);
+                if (dataFound != null)
+                {
+                    bool ans = helper.RemoveSubject(id);
+                    if (ans)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        return View();
+                    }
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+    }
+}
+
+-----------------------------ClassModel----------------------------
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace SchoolMVC.Models
+{
+    public class ClassModel
+    {
+        [Required()]
+        public int classRoomNo { get; set; }
+
+        public int NoOfStudentsInClass { get; set; }
+    }
+}
+
+-------------------------StudentModel-----------------------------
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace SchoolMVC.Models
+{
+    public class StudentModel
+    {
+        [Required()]
+        public  int RegisterNumber { get; set; }
+
+        [MaxLength(20,ErrorMessage ="Cannot be greater than 20 characters")]
+        [MinLength(3,ErrorMessage ="cannot be lesser than 3 characters")]
+        public string StudentName { get; set; }
+
+        public int Age { get; set; }
+
+       
+    }
+}
+
+-----------------------------SubjectModel------------------------
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace SchoolMVC.Models
+{
+    public class SubjectModel
+    {
+
+        [Required()]
+        public int SubjectId { get; set; }
+        
+        [MaxLength(20, ErrorMessage = "Cannot be greater than 20 characters")]
+        [MinLength(3, ErrorMessage = "cannot be lesser than 3 characters")]
+        public string SubjectName { get; set; }    
+    }
+}

@@ -1,0 +1,12 @@
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\bin\Debug\HelperLibrary.dll
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\bin\Debug\HelperLibrary.pdb
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\obj\Debug\HelperLibrary.csproj.AssemblyReference.cache
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\obj\Debug\HelperLibrary.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\obj\Debug\HelperLibrary.dll
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\obj\Debug\HelperLibrary.pdb
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\bin\Debug\BusinessLogicLibrary.dll
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\bin\Debug\DataAccessLibrary.dll
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\bin\Debug\BusinessLogicLibrary.pdb
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\bin\Debug\DataAccessLibrary.pdb
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\obj\Debug\HelperLibrary.csproj.CopyComplete
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\HelperLibrary\bin\Debug\DataAccessLibrary.dll.config

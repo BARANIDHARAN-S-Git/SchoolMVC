@@ -1,0 +1,6 @@
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\BusinessLogicLibrary\bin\Debug\BusinessLogicLibrary.dll
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\BusinessLogicLibrary\bin\Debug\BusinessLogicLibrary.pdb
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\BusinessLogicLibrary\obj\Debug\BusinessLogicLibrary.csproj.AssemblyReference.cache
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\BusinessLogicLibrary\obj\Debug\BusinessLogicLibrary.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\BusinessLogicLibrary\obj\Debug\BusinessLogicLibrary.dll
+C:\Users\Lenovo\Desktop\vs\ConsoleApp1\BusinessLogicLibrary\obj\Debug\BusinessLogicLibrary.pdb

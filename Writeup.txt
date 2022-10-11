@@ -1,0 +1,25 @@
+GithubLink:https://github.com/BARANIDHARAN-S-Git/SchoolMVC
+---------------------------------------------------------------------------------------------
+1)Created BusinessLogicLibrary for validation process and class Logic.
+
+2)Created Data Access Library fro Database Connection.
+
+3)Created Respective Stored procedure for Add,Delete,Update and show data in the Database.
+
+4)Created HelperLibrary for one layer of Abstraction.
+
+5)Created Controllers-Class,Subject,Student.
+
+6)Created Models-Class,Subject,Student with the Properties.
+
+7)Created Views,IndexView to show List of student,subject and class.
+
+8)Create view to Add data in the Database.
+
+9)Delete View to Delete data in the Database.
+
+10)Edit view to Update data in the Database.
+
+11)In the Output page,In Navbar It has the option to switch between the difeerent Tables like Student,Subject,Class.
+
+12)If the User Clicks Student in Navbar It shows the student Table stored in the Database with the Option to Add the data,Update the Data,Display the particular data Details,Delete the Data,Similarly for the Subject and Class Tables.
